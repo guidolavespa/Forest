@@ -1,5 +1,26 @@
-rm(list=ls())
-gc()
+## *********************************************************************************************************************************************************
+##              Repository for technical data dealing with Above Ground Biomass (AGB) Modelling in Tanzania (Version 1.0)
+## *********************************************************************************************************************************************************
+## 
+##  * JRC of the European Commission
+##  *
+##  * Purpose:  A R script allows predicting Above Ground Biomass.
+##  *
+##  *           We tested four predictive models to relate the remotely sensed parameters to AGB and evaluated their accuracies.
+##  *           Two models using inferential statistics (i.e. a generalised linear model and a generalised exponential model) 
+##  *           and two models machine learning (i.e. a Random Forest model and a Support Vector Machine (SVM) model). 
+##  *           The predictors of the models are image bands, their textures and spectral indices, while the response variable 
+##  *           is the AGB.
+##  *           
+##  *           - Updates to the Forest Article:           https://doi.org/TOBEDEFINED
+##  *
+##  *
+##  *
+##  * Author:   Guido Ceccherini
+##  * Email:    guido.ceccherini@gmail.com, guido.ceccherini@ec.europa.eu
+##
+##
+
 
 
 ###load libraries
@@ -10,9 +31,6 @@ library(grid)
 library(ggplot2)
 library(tidyr)
 library(viridis)
-
-### set working directory
-setwd("/data/cecchgu/LHG/plotdbfz36/")
 
 #####load dataset
 DATA_BIOMASS <- read.csv('DataBiomassRS.csv')
