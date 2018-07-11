@@ -1,8 +1,4 @@
 # Forest
- Repository for technical data dealing with Biomass modeling in Tanzania
-
-Above Ground Biomass (AGB) Modelling
-
 Repository for technical data dealing with Above Ground Biomass (AGB) Modelling in Tanzania
 
 A R script allows predicting Above Ground Biomass.
