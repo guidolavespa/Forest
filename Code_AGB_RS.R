@@ -195,7 +195,7 @@ plot(tuneResult)
 ##tune the SVM model
 tunedModel <- tuneResult$best.model
 test.pred.svm <- predict(tunedModel, test2) 
-test.pred.svm <- predictedY[1:nrow(test)]
+test.pred.svm <- test.pred.svm[1:nrow(test)]
 error <- test$BIOMASS - test.pred.svm  
 
 
