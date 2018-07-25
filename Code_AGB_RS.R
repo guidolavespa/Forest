@@ -488,8 +488,9 @@ ggsave("Plot3.png", width = 15, height = 20, units = "cm",dpi=300)
 
 
 
-
-# Split and compare quantiles
+##################################################################################################################
+#  RANDOM FOREST Split and compare quantiles
+#################################################################################################################
 ## from https://github.com/laresbernardo/lares/blob/ff7378b9f0ba74fc7ee66067f13945d101bdff34/R/model_plots.R 
 mplot_splits <- function(tag, score, splits = 5, subtitle = NA, model_name = NA, facet = NA, 
                          save = FALSE, subdir = NA, file_name = "viz_splits.png") {
