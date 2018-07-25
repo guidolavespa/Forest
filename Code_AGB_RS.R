@@ -483,3 +483,100 @@ Map_3
 ggsave("Plot3.png", width = 15, height = 20, units = "cm",dpi=300)
 
 
+
+
+
+
+
+
+# Split and compare quantiles
+## from https://github.com/laresbernardo/lares/blob/ff7378b9f0ba74fc7ee66067f13945d101bdff34/R/model_plots.R 
+mplot_splits <- function(tag, score, splits = 5, subtitle = NA, model_name = NA, facet = NA, 
+                         save = FALSE, subdir = NA, file_name = "viz_splits.png") {
+  
+  require(ggplot2)
+  require(dplyr)
+  require(RColorBrewer)
+  
+  if (length(tag) != length(score)) {
+    message("The tag and score vectors should be the same length.")
+    stop(message(paste("Currently, tag has",length(tag),"rows and score has",length(score))))
+  }
+  
+  if (splits > 10) {
+    stop("You should try with less splits!")
+  }
+  
+  df <- data.frame(tag, score, facet)
+  npersplit <- round(nrow(df)/splits)
+  
+  # For continuous tag values
+  if (length(unique(tag))) {
+    names <- df %>% 
+      mutate(tag = as.numeric(tag), 
+             quantile = ntile(tag, splits)) %>% group_by(quantile) %>%
+      summarise(n = n(), 
+                max_score = round(max(tag), 1), 
+                min_score = round(min(tag), 1)) %>%
+      mutate(quantile_tag = paste0(quantile," (",min_score,"-",max_score,")"))
+    df <- df %>% 
+      #mutate(score = score/100, tag = tag/100) %>%
+      mutate(quantile = ntile(tag, splits)) %>%
+      left_join(names, by = c("quantile")) %>% mutate(tag = quantile_tag) %>% 
+      select(-quantile, -n, -max_score, -min_score)
+    
+  } else {
+    # For categorical tag values
+    names <- df %>% 
+      mutate(quantile = ntile(score, splits)) %>% group_by(quantile) %>%
+      summarise(n = n(), 
+                max_score = round(100 * max(score), 1), 
+                min_score = round(100 * min(score), 1)) %>%
+      mutate(quantile_tag = paste0(quantile," (",min_score,"-",max_score,")")) 
+  }
+  
+  p <- df %>% 
+    mutate(quantile = ntile(score, splits)) %>% 
+    group_by(quantile, facet, tag) %>% tally() %>%
+    ungroup() %>% group_by(facet, tag) %>% 
+    arrange(desc(quantile)) %>%
+    mutate(p = round(100*n/sum(n),2),
+           cum = cumsum(100*n/sum(n))) %>%
+    left_join(names, by = c("quantile")) %>%
+    ggplot(aes(x = as.character(tag), y = p, label = as.character(p),
+               fill = as.character(quantile_tag))) + theme_minimal() +
+    geom_col(position = "stack") +
+    geom_text(size = 3, position = position_stack(vjust = 0.5), check_overlap = TRUE) +
+    xlab("Quantiles AGB") + ylab("Total Percentage by AGB") +
+    guides(fill = guide_legend(title=paste0("Predicted Biomass"))) +
+    labs(title = "AboveGround Biomass Predicted vs Actual, by Quantiles") +
+    scale_fill_brewer(palette = "Spectral")
+  
+  if(!is.na(subtitle)) {
+    p <- p + labs(subtitle = subtitle)
+  }  
+  
+  if(!is.na(model_name)) {
+    p <- p + labs(caption = model_name)
+  }
+  
+  if(!is.na(facet)) {
+    p <- p + facet_grid(. ~ facet, scales = "free")
+  }  
+  
+  if (!is.na(subdir)) {
+    dir.create(file.path(getwd(), subdir))
+    file_name <- paste(subdir, file_name, sep="/")
+  }
+  
+  if (save == TRUE) {
+    p <- p + ggsave(file_name, width = 6, height = 6)
+  }
+  
+  return(p)
+  
+}
+mplot_splits(tag = test$BIOMASS, 
+                    score = test.pred.forest,
+                    split = 4)
+ggsave("AGB_quantiles.png", width = 25, height = 20, units = "cm",dpi=300)
