@@ -295,6 +295,7 @@ all.predictions$model[all.predictions$model== "support.vector.machine"] = "Suppo
 all.predictions$RMSE <- rep(accuracy_H_with$RMSE, each=77)
 all.predictions$MAE <- rep(accuracy_H_with$MAE, each=77)
 all.predictions$relRMSE <- rep(round(accuracy_H_with$relRMSE, digit=3), each=77)
+all.predictions$r2 <- rep(round(accuracy_H_with$r2, digit=2), each=77)
 
 
 
@@ -363,6 +364,7 @@ ggplot(data = all.predictions,aes(x = actual, y = predictions)) +
 ###...and another one
 
 
+
 #another one
 Map_4 <- ggplot(data = all.predictions,aes(x = actual, y = predictions)) +
   geom_smooth(method=lm)+# data= accuracy_H_with, ###,color= V4
@@ -371,10 +373,15 @@ Map_4 <- ggplot(data = all.predictions,aes(x = actual, y = predictions)) +
   geom_point(aes(size=actual, fill=actual), colour="black",pch=21,show.legend = T) +
   facet_wrap(~ model,ncol = 2)  +xlim (c(0,max(all.predictions$actual))) +ylim (c(0,max(all.predictions$actual))) +
   ggtitle("AboveGround Biomass, Predicted vs. Actual, by model")+ coord_fixed(ratio = 1)+theme_Publication()+ 
-  xlab("Actual AboveGround Biomass [t/ha]") +
-  ylab("Predicted AboveGround Biomass [t/ha]")+
-  geom_text(aes(x=12, y=200, label= paste("RMSE= ", RMSE ), hjust=0))+
-  geom_text(aes(x=12, y=185, label= paste("MAE= ", MAE ), hjust=0))+
+  ylab(expression("Predicted AboveGround Biomass ["~t~ha^-1~"]"))+
+  xlab(expression("Actual AboveGround Biomass ["~t~ha^-1~"]"))+
+  # 
+  # xlab("Actual AboveGround Biomass [t haa^-1]") +
+  # ylab("Predicted AboveGround Biomass [t ha^-1]")+
+  geom_text(aes(x=12, y=200, label= paste("RMSE== ", RMSE, "~t~ha^-1"), hjust=0),parse=TRUE)+
+  geom_text(aes(x=12, y=185, label= paste("MAE== ", MAE , "~t~ha^-1"), hjust=0),parse=TRUE)+
+  geom_text(aes(x=12, y=170, label= paste("R^2== ", r2 ), hjust=0),parse=TRUE)+
+  
   # geom_text(aes(x=12, y=170, label= paste("relRMSE= ", relRMSE ), hjust=0))+
   scale_fill_viridis()
 
